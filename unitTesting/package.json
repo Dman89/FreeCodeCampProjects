@@ -1,0 +1,19 @@
+{
+  "name": "unittesting",
+  "version": "1.0.0",
+  "description": "Develope a Testing Practice",
+  "main": "src/server_start.js",
+  "scripts": {
+    "test": "mocha app/test/main.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.1.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0"
+  }
+}
