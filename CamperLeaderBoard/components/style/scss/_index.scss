@@ -1,0 +1,32 @@
+body {
+  color: white;
+}
+.card {
+  margin: 5em auto;
+  width: 600px;
+  @media (max-width: 600px) {
+    width: 80%;
+  }
+}
+.header {
+  background-color: #B67721;
+  padding: 1em 2em;
+  font-size: 1.4em;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.btn-top {
+  color: black;
+  background-color: #21B6A8;
+}
+.player {
+  background-color: #7F171F;
+  font-size: 1.15em;
+  padding: .5em 0;
+  &:nth-child(even) {
+    background-color: #B6212D;
+  }
+}
+.guide {
+  background-color: #7F5417;
+}
