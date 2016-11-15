@@ -56,15 +56,15 @@
 
 	var _reactRouter = __webpack_require__(172);
 
-	var _Nav = __webpack_require__(235);
+	var _Application = __webpack_require__(235);
 
-	var _Nav2 = _interopRequireDefault(_Nav);
+	var _Application2 = _interopRequireDefault(_Application);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var APP = document.getElementById('APP');
 
-	_reactDom2.default.render(_react2.default.createElement(_Nav2.default, null), APP);
+	_reactDom2.default.render(_react2.default.createElement(_Application2.default, null), APP);
 
 /***/ },
 /* 1 */
@@ -27091,99 +27091,157 @@
 
 	"use strict";
 
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	var Header = _react2.default.createClass({
+	  displayName: "Header",
 
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var Nav = function (_React$Component) {
-	  _inherits(Nav, _React$Component);
-
-	  function Nav() {
-	    _classCallCheck(this, Nav);
-
-	    return _possibleConstructorReturn(this, (Nav.__proto__ || Object.getPrototypeOf(Nav)).apply(this, arguments));
-	  }
-
-	  _createClass(Nav, [{
-	    key: "render",
-	    value: function render() {
-	      return _react2.default.createElement(
-	        "nav",
-	        { className: "navbar navbar-default" },
+	  render: function render() {
+	    return _react2.default.createElement(
+	      "div",
+	      { className: "header row" },
+	      _react2.default.createElement(
+	        "div",
+	        { className: "title col-xs-12 col-sm-4 text-center" },
+	        "Top 100 - Month"
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "button col-xs-6 col-sm-4 text-right" },
 	        _react2.default.createElement(
-	          "div",
-	          { className: "container-fluid" },
-	          _react2.default.createElement(
-	            "div",
-	            { className: "navbar-header" },
-	            _react2.default.createElement(
-	              "button",
-	              { className: "navbar-toggle collapsed", "data-toggle": "collapse", "data-target": "#navbar", "aria-expanded": "false" },
-	              _react2.default.createElement(
-	                "span",
-	                { className: "sr-only" },
-	                "Toggle Navigation"
-	              ),
-	              _react2.default.createElement("span", { className: "icon-bar" }),
-	              _react2.default.createElement("span", { className: "icon-bar" }),
-	              _react2.default.createElement("span", { className: "icon-bar" })
-	            ),
-	            _react2.default.createElement(
-	              "a",
-	              { href: "#", className: "navbar-brand" },
-	              "Top 100"
-	            )
-	          ),
-	          _react2.default.createElement(
-	            "div",
-	            { id: "navbar", className: "collapse navbar-collapse" },
-	            _react2.default.createElement(
-	              "ul",
-	              { className: "nav navbar-nav navbar-right" },
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "a",
-	                  { href: "" },
-	                  "All Time"
-	                )
-	              ),
-	              _react2.default.createElement(
-	                "li",
-	                null,
-	                _react2.default.createElement(
-	                  "a",
-	                  { href: "" },
-	                  "Last 30 Days"
-	                )
-	              )
-	            )
-	          )
+	          "button",
+	          { className: "btn btn-top", onClick: function () {
+	              this.props.onChangeRecent();
+	            }.bind(this) },
+	          "30 Days"
 	        )
-	      );
-	    }
-	  }]);
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "button col-xs-6 col-sm-4 text-left" },
+	        _react2.default.createElement(
+	          "button",
+	          { className: "btn btn-top", onClick: function () {
+	              this.props.onChangeAll();
+	            }.bind(this) },
+	          "All Time"
+	        )
+	      )
+	    );
+	  }
+	});
+	var Guide = _react2.default.createClass({
+	  displayName: "Guide",
 
-	  return Nav;
-	}(_react2.default.Component);
+	  render: function render() {
+	    return _react2.default.createElement(
+	      "div",
+	      { className: "guide row" },
+	      _react2.default.createElement(
+	        "div",
+	        { className: "number col-xs-6 col-sm-2 text-center" },
+	        "#"
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "name col-xs-6 col-sm-4" },
+	        "Name"
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "score col-xs-6 col-sm-3" },
+	        "30 Day"
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "score col-xs-6 col-sm-3" },
+	        "All Time"
+	      )
+	    );
+	  }
+	});
+	var Player = _react2.default.createClass({
+	  displayName: "Player",
 
-	exports.default = Nav;
-	;
+	  render: function render() {
+	    return _react2.default.createElement(
+	      "div",
+	      { className: "player row" },
+	      _react2.default.createElement(
+	        "div",
+	        { className: "number col-xs-6 col-sm-2 text-center" },
+	        this.props.number
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "name col-xs-6 col-sm-4" },
+	        this.props.name
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "score col-xs-6 col-sm-3" },
+	        this.props.recent
+	      ),
+	      _react2.default.createElement(
+	        "div",
+	        { className: "score col-xs-6 col-sm-3" },
+	        this.props.all
+	      )
+	    );
+	  }
+	});
+	var Application = _react2.default.createClass({
+	  displayName: "Application",
+
+	  getInitialState: function getInitialState() {
+	    return {
+	      player: [{ username: "Loading", alltime: "...", recent: "...", img: "image" }],
+	      url: ["https://fcctop100.herokuapp.com/api/fccusers/top/recent", "https://fcctop100.herokuapp.com/api/fccusers/top/alltime"],
+	      playerAll: [],
+	      playerRecent: []
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    $.ajax({ url: this.state.url[1], success: function (data) {
+	        this.setState({
+	          playerAll: data
+	        });
+	      }.bind(this) });
+	    $.ajax({ url: this.state.url[0], success: function (data) {
+	        this.setState({
+	          player: data,
+	          playerRecent: data
+	        });
+	      }.bind(this) });
+	  },
+	  recent: function recent() {
+	    this.setState({
+	      player: this.state.playerRecent
+	    });
+	  },
+	  alltime: function alltime() {
+	    console.log(this.state.playerAll);
+	    this.setState({
+	      player: this.state.playerAll
+	    });
+	  },
+	  render: function render() {
+	    return _react2.default.createElement(
+	      "div",
+	      null,
+	      _react2.default.createElement(Header, { onChangeAll: this.alltime, onChangeRecent: this.recent }),
+	      _react2.default.createElement(Guide, null),
+	      this.state.player.map(function (player, index) {
+	        return _react2.default.createElement(Player, { key: index, number: index + 1, all: player.alltime, img: player.img, recent: player.recent, name: player.username });
+	      })
+	    );
+	  }
+	});
+	module.exports = Application;
 
 /***/ }
 /******/ ]);
