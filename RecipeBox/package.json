@@ -29,6 +29,7 @@
     "react": "^15.3.2",
     "react-bootstrap": "^0.30.6",
     "react-dom": "^15.3.2",
+    "react-link-state": "^0.1.2",
     "react-router": "^2.8.1"
   }
 }

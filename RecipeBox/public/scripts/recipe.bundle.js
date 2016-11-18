@@ -21441,13 +21441,39 @@ webpackJsonp([0,1],[
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	var newItems, newTitle;
+
 	var Title = _react2.default.createClass({
 	  displayName: 'Title',
 
+	  getInitialState: function getInitialState() {
+	    return {
+	      openPanel: false
+	    };
+	  },
+	  togglePanel: function togglePanel(index, openPanel) {
+	    var openDOM = document.getElementById("panel" + index);
+	    console.log(openDOM);
+	    if (openPanel === false) {
+	      for (var x = 0; x < 101; x++) {
+	        document.getElementById("panel" + index).style.height = x + "px";
+	      }
+	      this.setState({ openPanel: true });
+	    } else if (openPanel === true) {
+	      for (var x = 100; x > -1; x--) {
+	        document.getElementById("panel" + index).style.height = x + "px";
+	      }
+	      this.setState({ openPanel: false });
+	    }
+	  },
 	  render: function render() {
 	    return _react2.default.createElement(
 	      'div',
-	      { className: 'col-xs-12 title' },
+	      { id: "toggle" + this.props.index, onClick: function () {
+	          this.togglePanel(this.props.index);
+	        }.bind(this), className: 'col-xs-12 title' },
 	      _react2.default.createElement(
 	        'h2',
 	        { className: 'title' },
@@ -21456,7 +21482,6 @@ webpackJsonp([0,1],[
 	    );
 	  }
 	});
-
 	var Item = _react2.default.createClass({
 	  displayName: 'Item',
 
@@ -21472,7 +21497,6 @@ webpackJsonp([0,1],[
 	    );
 	  }
 	});
-
 	var AddRecipe = _react2.default.createClass({
 	  displayName: 'AddRecipe',
 
@@ -21483,7 +21507,7 @@ webpackJsonp([0,1],[
 	      _react2.default.createElement(
 	        'button',
 	        { onClick: function () {
-	            this.props.onChangeAdd();
+	            this.props.onChangeOpen(-1);
 	          }.bind(this) },
 	        'Add Recipe'
 	      )
@@ -21499,13 +21523,14 @@ webpackJsonp([0,1],[
 	      { className: 'button col-xs-6 text-center' },
 	      _react2.default.createElement(
 	        'button',
-	        null,
+	        { onClick: function () {
+	            this.props.onChangeEdit(this.props.index);
+	          }.bind(this) },
 	        'Edit'
 	      )
 	    );
 	  }
 	});
-
 	var Recipe = _react2.default.createClass({
 	  displayName: 'Recipe',
 
@@ -21513,16 +21538,19 @@ webpackJsonp([0,1],[
 	    return _react2.default.createElement(
 	      'div',
 	      { className: 'row' },
-	      _react2.default.createElement(Title, { title: this.props.title }),
-	      this.props.items.map(function (item, index) {
-	        return _react2.default.createElement(Item, { key: index, item: item });
-	      }),
-	      _react2.default.createElement(EditRecipe, null),
+	      _react2.default.createElement(Title, { index: this.props.index, title: this.props.title }),
+	      _react2.default.createElement(
+	        'div',
+	        { id: "panel" + this.props.index, className: 'panelHide' },
+	        this.props.items.map(function (item, index) {
+	          return _react2.default.createElement(Item, { key: index, item: item });
+	        })
+	      ),
+	      _react2.default.createElement(EditRecipe, { index: this.props.index, onChangeEdit: this.props.onChangeEdit }),
 	      _react2.default.createElement(DeleteRecipe, { index: this.props.index, onChangeDelete: this.props.onChangeDelete })
 	    );
 	  }
 	});
-
 	var DeleteRecipe = _react2.default.createClass({
 	  displayName: 'DeleteRecipe',
 
@@ -21540,34 +21568,181 @@ webpackJsonp([0,1],[
 	    );
 	  }
 	});
+	var NewRecipeModal = _react2.default.createClass({
+	  displayName: 'NewRecipeModal',
 
+	  getInitialState: function getInitialState() {
+	    return {
+	      rTitle: this.props.showTitle,
+	      rItems: this.props.showItems
+	    };
+	  },
+	  componentDidMount: function componentDidMount() {
+	    this.setState(_defineProperty({
+	      rItems: this.props.showTitle
+	    }, 'rItems', this.props.showItems));
+	  },
+	  render: function render() {
+	    console.log(this.props);
+	    return _react2.default.createElement(
+	      _reactBootstrap.Modal,
+	      { show: this.props.showModal, onHide: function () {
+	          this.props.onChangeClosed(-2);
+	        }.bind(this) },
+	      _react2.default.createElement(
+	        _reactBootstrap.Modal.Header,
+	        { closeButton: true },
+	        _react2.default.createElement(
+	          _reactBootstrap.Modal.Title,
+	          { id: 'title' },
+	          this.props.modalTitle
+	        )
+	      ),
+	      _react2.default.createElement(
+	        _reactBootstrap.Modal.Body,
+	        null,
+	        _react2.default.createElement(
+	          _reactBootstrap.FormGroup,
+	          null,
+	          _react2.default.createElement(
+	            _reactBootstrap.ControlLabel,
+	            null,
+	            'Name:'
+	          ),
+	          _react2.default.createElement(_reactBootstrap.FormControl, {
+	            type: 'text',
+	            defaultValue: this.props.showTitle,
+	            placeholder: 'Recipe Name',
+	            id: 'rTitle'
+	          }),
+	          _react2.default.createElement(
+	            _reactBootstrap.ControlLabel,
+	            null,
+	            'Ingredients:'
+	          ),
+	          _react2.default.createElement(_reactBootstrap.FormControl, {
+	            type: 'text',
+	            defaultValue: this.props.showItems,
+	            placeholder: 'Enter Ingredients,Separated,By Commas',
+	            id: 'rItems'
+	          })
+	        )
+	      ),
+	      _react2.default.createElement(
+	        _reactBootstrap.Modal.Footer,
+	        null,
+	        _react2.default.createElement(
+	          _reactBootstrap.Button,
+	          { onClick: function () {
+	              this.props.onChangeAdd(this.props.index);
+	            }.bind(this), bsStyle: 'primary', id: 'rNew' },
+	          this.props.buttonText
+	        ),
+	        _react2.default.createElement(
+	          _reactBootstrap.Button,
+	          { onClick: function () {
+	              this.props.onChangeClosed(-2);
+	            }.bind(this), bsStyle: 'primary', id: 'rExit' },
+	          'Cancel'
+	        )
+	      )
+	    );
+	  }
+	});
+
+	var recipes = [{ title: "Tupac", items: ["Love", "Peace", "Chicken Grease"] }, { title: "Biggie", items: ["Heart", "Farts", "Cupcakes"] }, { title: "Kennedy", items: ["Lead", "Scope", "Grass"] }];
 	var Application = _react2.default.createClass({
 	  displayName: 'Application',
 
 	  getInitialState: function getInitialState() {
 	    return {
-	      recipes: [{ title: "Tupac", items: ["Love", "Peace", "Chicken Grease"] }, { title: "Biggie", items: ["Heart", "Farts", "Cupcakes"] }, { title: "Kennedy", items: ["Lead", "Scope", "Grass"] }]
+	      recipes: recipes,
+	      showModal: false,
+	      modalTitle: "",
+	      buttonText: "",
+	      showTitle: "",
+	      showItems: "",
+	      editOrNew: false,
+	      index: -2,
+	      total: recipes.length
 	    };
+	  },
+	  nowOpen: function nowOpen(index) {
+	    if (index >= 0) {
+	      this.setState({ index: index, showModal: true,
+	        newTitle: newTitle,
+	        newItems: newItems.join(", ")
+	      });
+	    } else {
+	      this.setState({
+	        showModal: true,
+	        index: -1
+	      });
+	    }
+	  },
+	  nowClosed: function nowClosed(index) {
+	    console.log(index);
+	    this.setStateBeforeSave(index);
 	  },
 	  deleteRecipe: function deleteRecipe(num) {
 	    var newArr = this.state.recipes.splice(num, 1);
-	    this.setState(this.state);
-	  },
-	  addRecipe: function addRecipe() {
 	    this.setState({
-	      recipes: this.state.recipes.concat({ title: "New Item", items: ["Love", "Peace", "Chicken Grease"] })
+	      recipes: this.state.recipes,
+	      total: this.state.total + 1
 	    });
 	  },
+	  addRecipe: function addRecipe(aindex) {
+	    var atotal = aindex == -1 ? this.state.total + 1 : this.state.total;
+	    var newArr = document.getElementById("rItems").value;
+	    newArr = newArr.split(", ");
+	    this.setState({ newTitle: document.getElementById("rTitle").value,
+	      newItems: newArr,
+	      total: atotal
+	    });
+	    this.setStateBeforeSave(aindex);
+	  },
+	  editRecipe: function editRecipe(index) {
+	    newItems = this.state.recipes[index].items, newTitle = this.state.recipes[index].title, this.setState({
+	      showModal: true,
+	      modalTitle: "Edit Recipe",
+	      buttonText: "Save"
+	    }), this.nowOpen(index);
+	  },
+	  setStateBeforeSave: function setStateBeforeSave(index) {
+	    if (index >= 0) {
+	      this.state.recipes[index] = { title: this.state.newTitle, items: this.state.newItems.split(", ") };
+	      this.setState({
+	        recipes: this.state.recipes,
+	        showModal: false,
+	        newTitle: "",
+	        newItems: ""
+	      });
+	    } else if (index == -2) {
+	      this.setState({
+	        showModal: false,
+	        newTitle: "",
+	        newItems: ""
+	      });
+	    } else {
+	      this.setState({
+	        recipes: this.state.recipes.concat({ title: this.state.newTitle, items: this.state.newItems.split(", ") }),
+	        showModal: false,
+	        newTitle: "",
+	        newItems: ""
+	      });
+	    }
+	  },
 	  render: function render() {
-	    var recipeRender = this.state.recipes.map(function (recipe, index) {
-	      return _react2.default.createElement(Recipe, { onChangeDelete: this.deleteRecipe, key: index, index: index, title: recipe.title, items: recipe.items });
-	    }.bind(this));
+	    var _React$createElement;
 
 	    return _react2.default.createElement(
 	      'div',
 	      null,
-	      recipeRender,
-	      _react2.default.createElement(AddRecipe, { onChangeAdd: this.addRecipe })
+	      this.state.recipes.map(function (recipe, index) {
+	        return _react2.default.createElement(Recipe, { onChangeDelete: this.deleteRecipe, key: index, index: index, title: recipe.title, items: recipe.items, onChangeEdit: this.editRecipe });
+	      }.bind(this)),
+	      _react2.default.createElement(AddRecipe, { onChangeOpen: this.nowOpen }),
+	      _react2.default.createElement(NewRecipeModal, (_React$createElement = { onChangeAdd: this.addRecipe, showItems: this.state.newItems, showTitle: this.state.newTitle, showModal: this.state.showModal }, _defineProperty(_React$createElement, 'showModal', this.state.showModal), _defineProperty(_React$createElement, 'buttonText', this.state.buttonText), _defineProperty(_React$createElement, 'modalTitle', this.state.modalTitle), _defineProperty(_React$createElement, 'onChangeClosed', this.nowClosed), _defineProperty(_React$createElement, 'index', this.state.index), _React$createElement))
 	    );
 	  }
 	});
