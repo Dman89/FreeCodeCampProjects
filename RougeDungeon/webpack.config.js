@@ -9,7 +9,7 @@ module.exports = [
     devServer: { inline: true },
     output: {
       path: path.resolve(__dirname, "public"),
-      filename: 'scripts/recipe.bundle.js'
+      filename: 'scripts/DungeonCrawler.bundle.js'
     },
     module: {
       loaders: [
