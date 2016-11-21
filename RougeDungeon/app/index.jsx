@@ -13,6 +13,25 @@ import {FormControl} from 'react-bootstrap';
 import {ControlLabel} from 'react-bootstrap';
 import React from 'react';
 
+document.onkeydown = function(e) {
+  let keyCode = e.keyCode;
+  console.log(keyCode)
+  switch (keyCode) {
+    case 37:
+      // Left
+    break;
+    case 38:
+      // Up
+    break;
+    case 39:
+      // Right
+    break;
+    case 40:
+      // Down
+    break;
+  }
+}
+
 
 var Tile = React.createClass({
   render: function() {
@@ -27,7 +46,8 @@ getInitialState: function() {
   return {
     size: 600,
     board: [],
-    layout: ['wall', 'open', 'open', 'open', 'open']
+    layout: ['wall', 'open', 'open', 'open', 'open'],
+    player: [0, 0],
   }
 },
 componentWillMount: function() {

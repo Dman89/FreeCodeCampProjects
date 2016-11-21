@@ -1,46 +1,12 @@
-.card {
-  margin: 5em auto;
-  padding: 2.2em;
-  border-radius: 4px;
-  background-color: #801638;
-  width: 600px;
-  color: white;
-  border: 10px #c22326 solid;
-  @media (max-width: 625px) {
-    width: 80%;
-  }
-}
-.title {
-  background-color: #027878;
-  border-radius: 4px;
-  & h2 {
-    margin-left: 2.5%;
-    width: 97.5%;
-  }
-}
-button {
-  color: black;
-}
-.items {
-  border-radius: 4px;
-  margin: .115em auto;
-  background-color: #F37338;
-  padding: .75em 5%;
-  font-size: 1.3em;
-  color: black;
-  &:nth-child(even) {
-    background-color: #FDB632;
-  }
-}
-.button  {
-  margin: 1.5em auto 2em;
-}
+
 
 .map {
   position: relative;
-  width: 600px;
-  height: 600px;
+  width: 610px;
+  height: 610px;
   background-color: #ddd;
+  border-radius: 5px;
+  border: brown 5px solid;
 }
 
 .tile {
@@ -51,4 +17,9 @@ button {
 }
 .wall {
   background-color: #fff;
+}
+
+
+.player {
+  background-color: gold;
 }
