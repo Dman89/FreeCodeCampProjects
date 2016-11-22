@@ -21725,24 +21725,13 @@ webpackJsonp([0,1],[
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	document.onkeydown = function (e) {
-	  var keyCode = e.keyCode;
-	  console.log(keyCode);
-	  switch (keyCode) {
-	    case 37:
-	      // Left
-	      break;
-	    case 38:
-	      // Up
-	      break;
-	    case 39:
-	      // Right
-	      break;
-	    case 40:
-	      // Down
-	      break;
+	var Player = _react2.default.createClass({
+	  displayName: 'Player',
+
+	  render: function render() {
+	    return _react2.default.createElement('div', { id: 'player' });
 	  }
-	};
+	});
 
 	var Tile = _react2.default.createClass({
 	  displayName: 'Tile',
@@ -21763,7 +21752,29 @@ webpackJsonp([0,1],[
 	      player: [0, 0]
 	    };
 	  },
-	  componentWillMount: function componentWillMount() {
+	  bindKeys: function bindKeys() {
+	    document.onkeydown = function (e) {
+	      var keyCode = e.keyCode;
+	      switch (keyCode) {
+	        case 37:
+	          // Left
+	          break;
+	        case 38:
+	          // Up
+	          break;
+	        case 39:
+	          // Right
+	          break;
+	        case 40:
+	          // Down
+	          break;
+	      }
+	    };
+	  },
+	  returnPlayer: function returnPlayer(x, y) {
+	    return _react2.default.createElement(Player, { x: x, y: y });
+	  },
+	  layMapOut: function layMapOut() {
 	    for (var y = 0; y < this.state.size; y += 50) {
 	      for (var x = 0; x < this.state.size; x += 50) {
 	        var num = Math.floor(Math.random() * this.state.layout.length);
@@ -21771,6 +21782,10 @@ webpackJsonp([0,1],[
 	      }
 	    }
 	    this.setState({ board: this.state.board });
+	  },
+	  componentWillMount: function componentWillMount() {
+	    this.bindKeys();
+	    this.layMapOut();
 	  },
 	  render: function render() {
 	    return _react2.default.createElement(
