@@ -21729,7 +21729,7 @@ webpackJsonp([0,1],[
 	  displayName: 'Player',
 
 	  render: function render() {
-	    return _react2.default.createElement('div', { id: 'player' });
+	    return _react2.default.createElement('div', { id: 'player', style: { top: this.props.y + 'px', left: this.props.x + 'px' } });
 	  }
 	});
 
@@ -21748,37 +21748,73 @@ webpackJsonp([0,1],[
 	    return {
 	      size: 600,
 	      board: [],
-	      layout: ['wall', 'open', 'open', 'open', 'open'],
-	      player: [0, 0]
+	      layout: ['wall', 'open', 'open', 'open', 'open', 'open', 'open', 'open', 'wall', 'open', 'open', 'enemy'],
+	      player: [0, 0],
+	      lastInteraction: {}
 	    };
 	  },
+	  checkTile: function checkTile(x, y) {
+	    for (var a = 0; a < this.state.board.length; a++) {
+	      if (this.state.board[a].x == x) {
+	        if (this.state.board[a].y == y) {
+	          if (this.state.board[a].display === 'open') {
+	            this.returnPlayer(x, y);
+	          } else if (this.state.board[a].display === 'enemy') {
+	            var dmg = 20;
+	            var GoT = "give";
+	            if (this.state.board[a].health > 0) {
+	              this.state.board[a].health -= dmg;
+	              if (this.state.board[a].health <= 0) {
+	                this.state.board[a].display = "open";
+	              }
+	              var lastInteract = { "name": this.state.board[a].name, "health": this.state.board[a].health, "dmg": dmg, "GoT": GoT };
+	              this.setState({ board: this.state.board, lastInteraction: lastInteract });
+	              this.interactionDisplay();
+	            }
+	          }
+	        }
+	      }
+	    }
+	  },
 	  bindKeys: function bindKeys() {
+	    var that = this;
 	    document.onkeydown = function (e) {
 	      var keyCode = e.keyCode;
 	      switch (keyCode) {
 	        case 37:
 	          // Left
+	          that.checkTile(that.state.player[0] - 50, that.state.player[1]);
 	          break;
 	        case 38:
 	          // Up
+	          that.checkTile(that.state.player[0], that.state.player[1] - 50);
 	          break;
 	        case 39:
 	          // Right
+	          that.checkTile(that.state.player[0] + 50, that.state.player[1]);
 	          break;
 	        case 40:
 	          // Down
+	          that.checkTile(that.state.player[0], that.state.player[1] + 50);
 	          break;
 	      }
 	    };
 	  },
 	  returnPlayer: function returnPlayer(x, y) {
-	    return _react2.default.createElement(Player, { x: x, y: y });
+	    this.setState({
+	      player: [x, y]
+	    });
+	  },
+	  interactionDisplay: function interactionDisplay() {
+	    console.log(this.state.lastInteraction);
 	  },
 	  layMapOut: function layMapOut() {
 	    for (var y = 0; y < this.state.size; y += 50) {
 	      for (var x = 0; x < this.state.size; x += 50) {
 	        var num = Math.floor(Math.random() * this.state.layout.length);
-	        this.state.board.push({ "x": x, "y": y, "display": this.state.layout[num] });
+	        var health = this.state.layout[num] == "enemy" ? 100 : "False";
+	        var name = this.state.layout[num] == "enemy" ? "Sideshow BoB" : "False";
+	        this.state.board.push({ "x": x, "y": y, "display": this.state.layout[num], "health": health, "name": name });
 	      }
 	    }
 	    this.setState({ board: this.state.board });
@@ -21786,6 +21822,7 @@ webpackJsonp([0,1],[
 	  componentWillMount: function componentWillMount() {
 	    this.bindKeys();
 	    this.layMapOut();
+	    this.returnPlayer(50, 50);
 	  },
 	  render: function render() {
 	    return _react2.default.createElement(
@@ -21793,7 +21830,8 @@ webpackJsonp([0,1],[
 	      { className: 'map' },
 	      this.state.board.map(function (tile, index) {
 	        return _react2.default.createElement(Tile, { key: index, y: tile.y, x: tile.x, display: tile.display });
-	      })
+	      }),
+	      _react2.default.createElement(Player, { x: this.state.player[0], y: this.state.player[1] })
 	    );
 	  }
 	});
