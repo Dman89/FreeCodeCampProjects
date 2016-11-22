@@ -30,7 +30,7 @@ module.exports = [
     plugins: [
       new webpack.OldWatchingPlugin(),
       new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"vendor", /* filename= */"scripts/vendor.bundle.js"),
-      new ExtractTextPlugin('public/styles/css/master.css', { allChunks: true })
+      new ExtractTextPlugin('styles/css/master.css', { allChunks: true })
     ]
   }
 ]

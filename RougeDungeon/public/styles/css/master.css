@@ -26,6 +26,19 @@
   }
 
 
+  .messageboard {
+    background-color: gold;
+    z-index: 100;
+    position: relative;
+    width: 600px;
+    height: 200px;
+    overflow-y: scroll;
+  }
+  .messageboard div {
+    background-color: black;
+    z-index: 102;
+  }
+
 
   #player {
     background-color: gold;
