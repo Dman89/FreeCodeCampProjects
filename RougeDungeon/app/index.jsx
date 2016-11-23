@@ -148,6 +148,7 @@ var Application = React.createClass({
         if (this.state.board[a].y == y) {
           if (this.state.board[a].display === 'open') {
             this.returnPlayer(x,y);
+            cb(1);
           }
           else if (this.state.board[a].display === 'enemy') {
             let dmg = this.state.playerStats.weapon[0].dmg * multi;
@@ -193,6 +194,7 @@ var Application = React.createClass({
   },
   bindKeys: function() {
     let that = this;
+    let multi = 1;
     document.onkeydown = function(e) {
       let keyCode = e.keyCode;
       switch (keyCode) {
