@@ -32,7 +32,7 @@
     position: relative;
     width: 600px;
     height: 200px;
-    overflow-y: scroll;
+    overflow: none;
   }
   .messageboard div {
     background-color: black;
@@ -46,5 +46,9 @@
     position: absolute;
     width: 50px;
     height: 50px;
+  }
+
+  .ladder {
+    background-color: blue!important;
   }
 /*# sourceMappingURL=master.css.map */
