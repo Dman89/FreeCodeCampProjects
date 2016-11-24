@@ -19,7 +19,7 @@ webpackJsonp([0,1],[
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _index = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./index.jsx\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _index = __webpack_require__(184);
 
 	var _index2 = _interopRequireDefault(_index);
 
@@ -21710,7 +21710,597 @@ webpackJsonp([0,1],[
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 184 */,
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var starterState = {
+	  size: 300,
+	  board: [],
+	  layout: ['wall', 'open', 'open', 'open', 'open', 'open', 'open', 'open', 'wall', 'open', 'open', 'enemy'],
+	  player: [0, 0],
+	  playerStats: { name: "Rouge", health: 1000, weapon: [{ name: "Fists", dmg: 5, quality: true, quantity: true, lifeSteal: 1 }], level: 1, exp: [0, 1000], armor: 0, sheild: { protect: 0, name: "None", quality: true } },
+	  lastInteraction: {},
+	  lastInteractionList: [],
+	  totalEnemies: [],
+	  level: 0,
+	  fog: [],
+	  fogOfWarOn: false
+	};
+	var Player = _react2.default.createClass({
+	  displayName: 'Player',
+
+	  render: function render() {
+	    return _react2.default.createElement('div', { id: 'player', style: { top: this.props.y + 'px', left: this.props.x + 'px' } });
+	  }
+	});
+
+	var Tile = _react2.default.createClass({
+	  displayName: 'Tile',
+
+	  render: function render() {
+	    return _react2.default.createElement('div', { className: "tile " + this.props.display + " " + this.props.fog, style: { top: this.props.y + 'px', left: this.props.x + 'px' } });
+	  }
+	});
+
+	var InteractionBoard = _react2.default.createClass({
+	  displayName: 'InteractionBoard',
+
+	  render: function render() {
+	    if (!this.props.interactionData.name) {
+	      return _react2.default.createElement('div', { className: 'alertDisplay' });
+	    } else if (this.props.interactionData.GoT == "give") {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'alertDisplay' },
+	        '>>> ',
+	        this.props.interactionData.name,
+	        ' was damaged for ',
+	        this.props.interactionData.dmg,
+	        ' HP, you stole ',
+	        this.props.interactionData.lifeSteal,
+	        ' HP, and ',
+	        this.props.interactionData.name,
+	        ' now has ',
+	        this.props.interactionData.health,
+	        ' HP'
+	      );
+	    } else {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'alertDisplay' },
+	        '>>> You have taken damage for ',
+	        this.props.interactionData.dmg,
+	        ' HP and you now have ',
+	        this.props.interactionData.health,
+	        ' HP'
+	      );
+	    }
+	  }
+	});
+	var InteractionDisplay = _react2.default.createClass({
+	  displayName: 'InteractionDisplay',
+
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'messageboard' },
+	      this.props.data.map(function (info, index) {
+	        if (info.GoT == "give") {
+	          return _react2.default.createElement(
+	            'div',
+	            { key: index },
+	            '>>> ',
+	            info.name,
+	            ' was damaged for ',
+	            info.dmg,
+	            ' HP, you stole ',
+	            info.lifeSteal,
+	            ' HP, and ',
+	            info.name,
+	            ' now has ',
+	            info.health,
+	            ' HP for ',
+	            info.exp > 1 ? info.exp : 0,
+	            ' exp'
+	          );
+	        } else {
+	          return _react2.default.createElement(
+	            'div',
+	            { key: index },
+	            '>>> You were damaged for ',
+	            info.dmg,
+	            ' HP and you know have ',
+	            info.health,
+	            ' HP'
+	          );
+	        }
+	      })
+	    );
+	  }
+	});
+	var CommandLine = _react2.default.createClass({
+	  displayName: 'CommandLine',
+
+	  render: function render() {
+	    return _react2.default.createElement('input', { id: 'cli', placeholder: 'Enter Command Here', onChange: this.props.onChangeCheckForCommand });
+	  }
+	});
+	var PlayerStats = _react2.default.createClass({
+	  displayName: 'PlayerStats',
+
+	  render: function render() {
+	    var newArr = this.props.health - this.props.health % 1;
+	    return _react2.default.createElement(
+	      'div',
+	      { className: 'playerStats' },
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        'Life:',
+	        _react2.default.createElement('br', null),
+	        newArr
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        'Char Level:',
+	        _react2.default.createElement('br', null),
+	        this.props.charLevel
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        'Exp:',
+	        _react2.default.createElement('br', null),
+	        this.props.exp[0] + " / " + this.props.exp[1]
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        'Dmg:',
+	        _react2.default.createElement('br', null),
+	        this.props.dmg
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        'L.S.:',
+	        _react2.default.createElement('br', null),
+	        this.props.lifeSteal * 100,
+	        '%'
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        'Level:',
+	        _react2.default.createElement('br', null),
+	        this.props.level
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        null,
+	        'Enemies:',
+	        _react2.default.createElement('br', null),
+	        this.props.enemies
+	      )
+	    );
+	  }
+	});
+	var Application = _react2.default.createClass({
+	  displayName: 'Application',
+
+	  getInitialState: function getInitialState() {
+	    return starterState;
+	  },
+	  checkExp: function checkExp(min, max) {
+	    if (min >= max) {
+	      this.state.playerStats.exp[0] = min - max;
+	      this.state.playerStats.level += 1;
+	      this.setState(this.state);
+	      this.setPlayer();
+	    }
+	  },
+	  startSpawnLadder: function startSpawnLadder() {
+	    var runArray = [[25, 25], [275, 25], [275, 275], [25, 275], [150, 150]];
+	    for (var b = 0; b < runArray.length; b++) {
+	      this.spawnLadder(runArray[b][0], runArray[b][1]);
+	    }
+	  },
+	  spawnLadder: function spawnLadder(x, y) {
+	    for (var z = 0; z < this.state.board.length; z++) {
+	      var objCheck = this.state.board[z];
+	      if (x == objCheck.x && y == objCheck.y) {
+	        this.state.board[z] = { "x": x, "y": y, "display": "ladder", "health": false, "name": false, "dmg": false };
+
+	        this.setState({ board: this.state.board });
+
+	        return;
+	      }
+	    }
+	  },
+	  checkTile: function checkTile(x, y, multi, cb) {
+	    for (var a = 0; a < this.state.board.length; a++) {
+	      if (this.state.board[a].x == x) {
+	        if (this.state.board[a].y == y) {
+	          if (this.state.board[a].display === 'open') {
+	            this.returnPlayer(x, y);
+	            cb(1);
+	          } else if (this.state.board[a].display === 'enemy') {
+	            var dmg = this.state.playerStats.weapon[0].dmg * multi;
+	            var GoT = "give";
+	            var lifeSteal = this.state.playerStats.weapon[0].lifeSteal >= 0 ? this.state.playerStats.weapon[0].lifeSteal * dmg : 0;
+	            this.state.playerStats.health += lifeSteal;
+	            var exp = 0;
+	            if (this.state.board[a].health > 0) {
+	              this.state.board[a].health -= dmg;
+	              this.state.board[a].health = this.state.board[a].health - this.state.board[a].health % 1;
+	              if (this.state.board[a].health <= 0) {
+	                this.state.board[a].display = "open";
+	                this.state.playerStats.exp[0] += this.state.board[a].exp;
+	                this.returnPlayer(x, y);
+	                this.checkExp(this.state.playerStats.exp[0], this.state.playerStats.exp[1]);
+	                this.state.totalEnemies -= 1;
+	                if (this.state.totalEnemies == 0) {
+	                  this.startSpawnLadder();
+	                }
+	              }
+	              var lastInteract = { "name": this.state.board[a].name, "health": this.state.board[a].health, "dmg": dmg, "GoT": GoT, "lifeSteal": lifeSteal, "exp": exp };
+	              this.setState({ board: this.state.board, lastInteraction: lastInteract, totalEnemies: this.state.totalEnemies, playerStats: this.state.playerStats });
+	              this.interactionDisplay(lastInteract);
+	              cb(multi + 2);
+	            }
+	          } else if (this.state.board[a].display == "ladder") {
+	            this.levelUp();
+	            this.softReset();
+	            this.layMapOut();
+	            this.state.playerStats.health += 1000;
+	            this.setState({ playerStats: this.state.playerStats });
+	            if (this.state.level == 3 || this.state.level == 6) {
+	              this.startWeaponSpawn();
+	            }
+	          } else if (this.state.board[a].display == "weapon") {
+	            var currentLevel = this.state.level;
+	            if (currentLevel == 3) {
+	              this.state.playerStats.weapon.unshift({ name: "Katana", dmg: 10, quality: true, quantity: true, lifeSteal: 1.5 });
+	            } else if (currentLevel == 6) {
+	              this.state.playerStats.weapon.unshift({ name: "Barbarian Sword", dmg: 20, quality: true, quantity: true, lifeSteal: 3 });
+	            }
+	            this.setState({ playerStats: this.state.playerStats });
+	            this.startClearWeaponSpawn();
+	          }
+	        }
+	      }
+	    }
+	    this.autoAttack();
+	  },
+	  printInteractionTakeDmg: function printInteractionTakeDmg(tile, dmg) {
+	    var GoT = "take";
+	    var lastInteract = { "name": this.state.playerStats.name, "health": this.state.playerStats.health, "dmg": dmg, "GoT": GoT };
+	    this.setState({ lastInteraction: lastInteract });
+	    this.interactionDisplay(lastInteract);
+	  },
+	  bindKeys: function bindKeys() {
+	    var that = this;
+	    var multi = 1;
+	    document.onkeydown = function (e) {
+	      var keyCode = e.keyCode;
+	      switch (keyCode) {
+	        case 37:
+	          // Left
+	          that.checkTile(that.state.player[0] - 25, that.state.player[1], multi, function (newMulti) {
+	            multi = newMulti;
+	          });
+	          break;
+	        case 38:
+	          // Up
+	          that.checkTile(that.state.player[0], that.state.player[1] - 25, multi, function (newMulti) {
+	            multi = newMulti;
+	          });
+	          break;
+	        case 39:
+	          // Right
+	          that.checkTile(that.state.player[0] + 25, that.state.player[1], multi, function (newMulti) {
+	            multi = newMulti;
+	          });
+	          break;
+	        case 40:
+	          // Down
+	          that.checkTile(that.state.player[0], that.state.player[1] + 25, multi, function (newMulti) {
+	            multi = newMulti;
+	          });
+	          break;
+	        case 49:
+	          // Down
+	          that.weaponChange(1, that.state.playerStats.weapon.length);
+	          break;
+	        case 50:
+	          // Down
+	          that.weaponChange(2, that.state.playerStats.weapon.length);
+	          break;
+	        case 51:
+	          // Down
+	          that.weaponChange(3, that.state.playerStats.weapon.length);
+	          break;
+	      }
+	    };
+	  },
+	  weaponChange: function weaponChange(key, len) {
+	    var weaponlog = this.state.playerStats.weapon;
+	    if (key <= len) {
+	      switch (key) {
+	        case 1:
+	          if (weaponlog[0].name != "Fists") {
+	            for (var x = 0; x < weaponlog.length; x++) {
+	              if (weaponlog[x].name == "Fists") {
+	                var weaponToSend = weaponlog.splice(x, 1);
+	                weaponlog.unshift(weaponToSend[0]);
+	              }
+	            }
+	          }
+	          break;
+	        case 2:
+	          if (weaponlog[0].name != "Katana") {
+	            for (var x = 0; x < weaponlog.length; x++) {
+	              if (weaponlog[x].name == "Katana") {
+	                var _weaponToSend = weaponlog.splice(x, 1);
+	                weaponlog.unshift(_weaponToSend[0]);
+	              }
+	            }
+	          }
+	          break;
+	        case 3:
+	          if (weaponlog[0].name != "Barbarian Sword") {
+	            for (var x = 0; x < weaponlog.length; x++) {
+	              if (weaponlog[x].name == "Barbarian Sword") {
+	                var _weaponToSend2 = weaponlog.splice(x, 1);
+	                weaponlog.unshift(_weaponToSend2[0]);
+	              }
+	            }
+	          }
+	          break;
+	      }
+	    }
+	    this.state.playerStats.weapon = weaponlog;
+	    this.setState({ playerStats: this.state.playerStats });
+	  },
+	  returnPlayer: function returnPlayer(x, y) {
+	    this.setState({
+	      player: [x, y]
+	    });
+	    this.compareCoord(x, y, this.state.board, this.state.fogOfWarOn, function () {});
+	  },
+	  interactionDisplay: function interactionDisplay(item) {
+	    this.state.lastInteractionList.unshift(item);
+	    if (this.state.lastInteractionList.length >= 3) {
+	      this.state.lastInteractionList.splice(3, 1);
+	    }
+	    this.setState({ lastInteractionList: this.state.lastInteractionList });
+	  },
+	  softReset: function softReset() {
+	    return this.setState({ board: [] });
+	  },
+	  hardReset: function hardReset() {
+	    return this.setState({ board: [], level: 0 });
+	  },
+	  levelUp: function levelUp() {
+	    this.state.level += 1;
+	    this.setPlayer();
+	    this.setState({ level: this.state.level });
+	  },
+	  layMapOut: function layMapOut() {
+	    var counterForEnemies = 0;
+	    for (var y = 0; y < this.state.size; y += 25) {
+	      for (var x = 0; x < this.state.size; x += 25) {
+	        var num = Math.floor(Math.random() * this.state.layout.length);
+	        var health = this.state.layout[num] == "enemy" ? 100 * (this.state.level * 1) : "False";
+	        var name = this.state.layout[num] == "enemy" ? "Sideshow BoB" : "False";
+	        var dmg = this.state.layout[num] == "enemy" ? Math.floor(Math.random() * 20 + 20) * (this.state.level * 1.30) : "False";
+	        var fog = this.state.fogOfWarOn == true ? "blackOut" : "clear";
+	        var exp = this.state.layout[num] == "enemy" ? 100 * this.state.level : "false";
+	        this.state.board.push({ "x": x, "y": y, "display": this.state.layout[num], "health": health, "name": name, "dmg": dmg, "fog": fog, "exp": exp });
+	        if (this.state.layout[num] == "enemy") {
+	          counterForEnemies += 1;
+	        }
+	      }
+	    }
+	    this.setState({ board: this.state.board, totalEnemies: counterForEnemies });
+	  },
+	  autoAttack: function autoAttack() {
+	    for (var x = 0; x < this.state.board.length; x++) {
+	      if (this.state.board[x].display == "enemy") {
+	        var xAxis = this.state.board[x].x;
+	        var yAxis = this.state.board[x].y;
+	        var checkXAxis = this.state.player[0];
+	        var checkYAxis = this.state.player[1];
+	        var numOne = 0;
+	        if (checkYAxis == yAxis && xAxis == checkXAxis - 25) {
+	          this.state.playerStats.health -= this.state.board[x].dmg - this.state.board[x].dmg % 1;
+	          this.printInteractionTakeDmg(this.state.playerStats, this.state.board[x].dmg - this.state.board[x].dmg % 1);
+	        }
+	        if (checkYAxis == yAxis && xAxis == checkXAxis + 25) {
+	          this.state.playerStats.health -= this.state.board[x].dmg - this.state.board[x].dmg % 1;
+	          this.printInteractionTakeDmg(this.state.playerStats, this.state.board[x].dmg - this.state.board[x].dmg % 1);
+	        }
+	        if (checkXAxis == xAxis && yAxis == checkYAxis - 25) {
+	          this.state.playerStats.health -= this.state.board[x].dmg - this.state.board[x].dmg % 1;
+	          this.printInteractionTakeDmg(this.state.playerStats, this.state.board[x].dmg - this.state.board[x].dmg % 1);
+	        }
+	        if (checkXAxis == xAxis && yAxis == checkYAxis + 25) {
+	          this.state.playerStats.health -= this.state.board[x].dmg - this.state.board[x].dmg % 1;
+	          this.printInteractionTakeDmg(this.state.playerStats, this.state.board[x].dmg - this.state.board[x].dmg % 1);
+	        }
+	        this.setState({ playerStats: this.state.playerStats });
+	        if (this.state.playerStats.health <= 0) {
+	          this.death();
+	        }
+	      }
+	    }
+	  },
+	  checkForCommand: function checkForCommand() {
+	    var valueCheck = document.getElementById("cli").value;
+	    if (valueCheck.length >= 0) {
+	      if (valueCheck === "Kill") {
+	        this.killAllEnimies();
+	        this.startSpawnLadder();
+	        document.getElementById("cli").value = "";
+	      }
+	      if (valueCheck === "Fog") {
+	        var fog = this.state.fogOfWarOn == true ? false : true;
+	        this.setState({ fogOfWarOn: fog });
+	        this.compareCoord(this.state.player[0], this.state.player[1], this.state.board, this.state.fogOfWarOn, function () {});
+	        document.getElementById("cli").value = "";
+	      }
+	      if (valueCheck === "Stuck") {
+	        this.startSpawnLadder();
+	        document.getElementById("cli").value = "";
+	      }
+	      if (valueCheck === "Reset") {
+	        this.layMapOut();
+	        document.getElementById("cli").value = "";
+	      }
+	      if (valueCheck === "Restart") {
+	        this.death();
+	        document.getElementById("cli").value = "";
+	      }
+	    }
+	  },
+	  killAllEnimies: function killAllEnimies() {
+	    for (var x = 0; x < this.state.board.length; x++) {
+	      var checkVar = this.state.board[x].display;
+	      if (checkVar === "enemy") {
+	        this.state.board[x].display = "open";
+	      }
+	    }
+	    this.setState({ board: this.state.board, totalEnemies: 0 });
+	  },
+	  compareCoord: function compareCoord(x, y, board, fog, cb) {
+	    if (fog == true) {
+	      for (var a = 0; a < board.length; a++) {
+	        this.checkCoord(board[a].x, board[a].y, a, function () {
+	          cb();
+	        });
+	      }
+	    } else {
+	      for (var a = 0; a < board.length; a++) {
+	        this.state.board[a].fog = "clear";
+	      }
+	    }
+	    this.setState({ board: this.state.board });
+	  },
+	  checkCoord: function checkCoord(x, y, index, cb) {
+	    var playerPos = this.state.player;
+	    if (x == playerPos[0] && y >= playerPos[1] - 50 && y <= playerPos[1] + 50) {
+	      this.state.board[index].fog = "clear";
+	    } else if (y == playerPos[1] && x >= playerPos[0] - 50 && x <= playerPos[0] + 50) {
+	      this.state.board[index].fog = "clear";
+	    } else if (y == playerPos[1] + 25 && x >= playerPos[0] - 25 && x <= playerPos[0] + 25) {
+	      this.state.board[index].fog = "clear";
+	    } else if (y == playerPos[1] - 25 && x >= playerPos[0] - 25 && x <= playerPos[0] + 25) {
+	      this.state.board[index].fog = "clear";
+	    } else {
+	      this.state.board[index].fog = "blackOut";
+	    }
+	    this.setState({ board: this.state.board });
+	    cb();
+	  },
+	  death: function death() {
+	    this.setState(starterState);
+	    this.layMapOut();
+	  },
+	  setPlayer: function setPlayer() {
+	    switch (this.state.playerStats.weapon[0].name) {
+	      case "Fists":
+	        this.state.playerStats.weapon[0].dmg = 5 * (this.state.playerStats.level * 1.25);
+	        break;
+	      case "Katana":
+	        this.state.playerStats.weapon[0].dmg = 10 * (this.state.playerStats.level * 1.25);
+	        break;
+	      case "Barbarian Sword":
+	        this.state.playerStats.weapon[0].dmg = 20 * (this.state.playerStats.level * 1.25);
+	        break;
+	    }
+	    this.state.playerStats.exp[1] = 1000 * this.state.playerStats.level;
+	    this.setState({
+	      playerStats: this.state.playerStats
+	    });
+	  },
+	  weaponSpawn: function weaponSpawn(x, y) {
+	    for (var z = 0; z < this.state.board.length; z++) {
+	      var objCheck = this.state.board[z];
+	      if (x == objCheck.x && y == objCheck.y) {
+	        if (this.state.board[z].display == "enemy") {
+	          this.state.totalEnemies -= 1;
+	        }
+	        this.state.board[z] = { "x": x, "y": y, "display": "weapon", "health": false, "name": false, "dmg": false };
+
+	        this.setState({ board: this.state.board, totalEnemies: this.state.totalEnemies });
+
+	        return;
+	      }
+	    }
+	  },
+	  startWeaponSpawn: function startWeaponSpawn() {
+	    var runArray = [[25, 25], [275, 25], [275, 275], [25, 275], [150, 150]];
+	    for (var b = 0; b < runArray.length; b++) {
+	      this.weaponSpawn(runArray[b][0], runArray[b][1]);
+	    }
+	  },
+	  startClearWeaponSpawn: function startClearWeaponSpawn() {
+	    var runArray = [[25, 25], [275, 25], [275, 275], [25, 275], [150, 150]];
+	    for (var b = 0; b < runArray.length; b++) {
+	      this.clearWeaponSpawn(runArray[b][0], runArray[b][1]);
+	    }
+	  },
+	  clearWeaponSpawn: function clearWeaponSpawn(x, y) {
+	    for (var z = 0; z < this.state.board.length; z++) {
+	      var objCheck = this.state.board[z];
+	      if (x == objCheck.x && y == objCheck.y) {
+	        this.state.board[z] = { "x": x, "y": y, "display": "open", "health": false, "name": false, "dmg": false };
+
+	        this.setState({ board: this.state.board });
+
+	        return;
+	      }
+	    }
+	  },
+	  componentWillMount: function componentWillMount() {
+	    this.setPlayer();
+	    this.levelUp();
+	    this.layMapOut();
+	    this.returnPlayer(0, 0);
+	    this.bindKeys();
+	  },
+	  render: function render() {
+	    return _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'map' },
+	        this.state.board.map(function (tile, index) {
+	          return _react2.default.createElement(Tile, { key: index, y: tile.y, x: tile.x, display: tile.display, fog: tile.fog });
+	        }),
+	        _react2.default.createElement(Player, { x: this.state.player[0], y: this.state.player[1] })
+	      ),
+	      _react2.default.createElement(PlayerStats, { health: this.state.playerStats.health, dmg: this.state.playerStats.weapon[0].dmg, charLevel: this.state.playerStats.level, exp: this.state.playerStats.exp, lifeSteal: this.state.playerStats.weapon[0].lifeSteal, level: this.state.level, enemies: this.state.totalEnemies }),
+	      _react2.default.createElement(CommandLine, { onChangeCheckForCommand: this.checkForCommand }),
+	      _react2.default.createElement(InteractionBoard, { interactionData: this.state.lastInteraction }),
+	      _react2.default.createElement(InteractionDisplay, { data: this.state.lastInteractionList })
+	    );
+	  }
+	});
+
+	module.exports = Application;
+
+/***/ },
 /* 185 */
 /***/ function(module, exports) {
 
