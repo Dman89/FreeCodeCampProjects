@@ -176,10 +176,25 @@ var Application = React.createClass({
             }
           }
           else if (this.state.board[a].display == "ladder") {
-            this.hardReset();
+            this.levelUp();
+            this.softReset();
             this.layMapOut();
             this.state.playerStats.health += 1000;
             this.setState({playerStats: this.state.playerStats,})
+            if (this.state.level == 3 || this.state.level == 6) {
+              this.startWeaponSpawn();
+            }
+          }
+          else if (this.state.board[a].display == "weapon") {
+            let currentLevel = this.state.level;
+            if (currentLevel == 3) {
+              this.state.playerStats.weapon.unshift({name:"Katana", dmg: 10, quality: true, quantity: true, lifeSteal: 1.5})
+            }
+            else if (currentLevel == 6) {
+              this.state.playerStats.weapon.unshift({name:"Barbarian Sword", dmg: 20, quality: true, quantity: true, lifeSteal: 3})
+            }
+            this.setState({playerStats: this.state.playerStats,})
+            this.startClearWeaponSpawn();
           }
         }
       }
@@ -222,8 +237,59 @@ var Application = React.createClass({
               multi = newMulti
           });
         break;
+        case 49:
+          // Down
+          that.weaponChange(1, that.state.playerStats.weapon.length);
+        break;
+        case 50:
+          // Down
+          that.weaponChange(2, that.state.playerStats.weapon.length);
+        break;
+        case 51:
+          // Down
+          that.weaponChange(3, that.state.playerStats.weapon.length);
+        break;
       }
     }
+  },
+  weaponChange: function(key, len) {
+    let weaponlog = this.state.playerStats.weapon;
+    if (key <= len) {
+      switch (key) {
+        case 1:
+          if (weaponlog[0].name != "Fists") {
+            for (var x = 0; x < weaponlog.length; x++) {
+              if (weaponlog[x].name == "Fists") {
+                let weaponToSend = weaponlog.splice(x, 1);
+                weaponlog.unshift(weaponToSend[0]);
+              }
+            }
+          }
+        break;
+        case 2:
+          if (weaponlog[0].name != "Katana") {
+            for (var x = 0; x < weaponlog.length; x++) {
+              if (weaponlog[x].name == "Katana") {
+                let weaponToSend = weaponlog.splice(x, 1);
+                weaponlog.unshift(weaponToSend[0]);
+              }
+            }
+          }
+        break;
+        case 3:
+          if (weaponlog[0].name != "Barbarian Sword") {
+            for (var x = 0; x < weaponlog.length; x++) {
+              if (weaponlog[x].name == "Barbarian Sword") {
+                let weaponToSend = weaponlog.splice(x, 1);
+                weaponlog.unshift(weaponToSend[0]);
+              }
+            }
+          }
+        break;
+      }
+    }
+    this.state.playerStats.weapon = weaponlog;
+    this.setState({playerStats: this.state.playerStats})
   },
   returnPlayer: function(x, y) {
     this.setState({
@@ -235,23 +301,30 @@ var Application = React.createClass({
   },
   interactionDisplay: function(item) {
     this.state.lastInteractionList.unshift(item)
-    if (this.state.lastInteractionList.length >= 5) {
-      this.state.lastInteractionList.splice(5, 1)
+    if (this.state.lastInteractionList.length >= 3) {
+      this.state.lastInteractionList.splice(3, 1)
     }
     this.setState({lastInteractionList: this.state.lastInteractionList})
   },
-  hardReset: function() {
+  softReset: function() {
     return this.setState({board: []})
   },
-  layMapOut: function() {
+  hardReset: function() {
+    return this.setState({board: [], level: 0})
+  },
+  levelUp: function() {
     this.state.level += 1;
+    this.setPlayer();
+    this.setState({level: this.state.level})
+  },
+  layMapOut: function() {
     let counterForEnemies = 0;
     for (var y = 0; y < this.state.size; y += 25) {
       for (var x = 0; x < this.state.size; x += 25) {
         let num = Math.floor(Math.random() * this.state.layout.length);
-        let health = this.state.layout[num] == "enemy" ? 100 * (this.state.level * 1.15) : "False";
+        let health = this.state.layout[num] == "enemy" ? 100 * (this.state.level * 1) : "False";
         let name = this.state.layout[num] == "enemy" ? "Sideshow BoB" : "False";
-        let dmg = this.state.layout[num] == "enemy" ? Math.floor((Math.random() * 20) + 20) * (this.state.level * 1.35) : "False";
+        let dmg = this.state.layout[num] == "enemy" ? Math.floor((Math.random() * 20) + 20) * (this.state.level * 1.30) : "False";
         let fog = this.state.fogOfWarOn == true ? "blackOut" : "clear";
         let exp = this.state.layout[num] == "enemy" ? 100 * this.state.level : "false";
         this.state.board.push({"x": x, "y": y, "display": this.state.layout[num], "health": health, "name": name, "dmg": dmg, "fog": fog, "exp": exp})
@@ -260,7 +333,7 @@ var Application = React.createClass({
         }
       }
     }
-    this.setState({board: this.state.board, totalEnemies: counterForEnemies, level: this.state.level,})
+    this.setState({board: this.state.board, totalEnemies: counterForEnemies})
   },
   autoAttack: function() {
     for (var x = 0; x < this.state.board.length; x++) {
@@ -272,19 +345,19 @@ var Application = React.createClass({
         let numOne = 0
         if (checkYAxis == yAxis && xAxis == checkXAxis - 25) {
           this.state.playerStats.health -= this.state.board[x].dmg - (this.state.board[x].dmg % 1);
-          this.printInteractionTakeDmg(this.state.playerStats);
+          this.printInteractionTakeDmg(this.state.playerStats, this.state.board[x].dmg - (this.state.board[x].dmg % 1));
         }
         if (checkYAxis == yAxis && xAxis == checkXAxis + 25) {
           this.state.playerStats.health -= this.state.board[x].dmg - (this.state.board[x].dmg % 1);
-          this.printInteractionTakeDmg(this.state.playerStats);
+          this.printInteractionTakeDmg(this.state.playerStats, this.state.board[x].dmg - (this.state.board[x].dmg % 1));
         }
         if (checkXAxis == xAxis && yAxis == checkYAxis - 25) {
           this.state.playerStats.health -= this.state.board[x].dmg - (this.state.board[x].dmg % 1);
-          this.printInteractionTakeDmg(this.state.playerStats);
+          this.printInteractionTakeDmg(this.state.playerStats, this.state.board[x].dmg - (this.state.board[x].dmg % 1));
         }
         if (checkXAxis == xAxis && yAxis == checkYAxis + 25) {
           this.state.playerStats.health -= this.state.board[x].dmg - (this.state.board[x].dmg % 1);
-          this.printInteractionTakeDmg(this.state.playerStats);
+          this.printInteractionTakeDmg(this.state.playerStats, this.state.board[x].dmg - (this.state.board[x].dmg % 1));
         }
         this.setState({playerStats: this.state.playerStats})
         if (this.state.playerStats.health <= 0) {
@@ -309,6 +382,14 @@ var Application = React.createClass({
       }
       if (valueCheck === "Stuck") {
         this.startSpawnLadder();
+        document.getElementById("cli").value = "";
+      }
+      if (valueCheck === "Reset") {
+        this.layMapOut();
+        document.getElementById("cli").value = "";
+      }
+      if (valueCheck === "Restart") {
+        this.death();
         document.getElementById("cli").value = "";
       }
     }
@@ -336,51 +417,96 @@ var Application = React.createClass({
         this.state.board[a].fog = "clear";
 
       }
-      this.setState({board: this.state.board,})
     }
+    this.setState({board: this.state.board,})
   },
   checkCoord: function(x, y, index, cb) {
     let playerPos = this.state.player;
     if (x == playerPos[0] && y >= (playerPos[1] - 50) && y <= (playerPos[1] + 50)) {
       this.state.board[index].fog = "clear";
-      this.setState({board: this.state.board,})
     }
     else if (y == playerPos[1] && x >= (playerPos[0] - 50) && x <= (playerPos[0] + 50)) {
       this.state.board[index].fog = "clear";
-      this.setState({board: this.state.board,})
     }
     else if (y == playerPos[1] + 25 && x >= (playerPos[0] - 25) && x <= (playerPos[0] + 25)) {
       this.state.board[index].fog = "clear";
-      this.setState({board: this.state.board,})
     }
     else if (y == playerPos[1] - 25 && x >= (playerPos[0] - 25) && x <= (playerPos[0] + 25)) {
       this.state.board[index].fog = "clear";
-      this.setState({board: this.state.board,})
     }
     else {
       this.state.board[index].fog = "blackOut";
-      this.setState({board: this.state.board,})
     }
+    this.setState({board: this.state.board,})
     cb();
 
   },
   death: function() {
     this.setState(starterState)
     this.layMapOut();
-    this.returnPlayer(0,0);
   },
   setPlayer: function () {
-    this.state.playerStats.weapon[0].dmg= 5 * (this.state.playerStats.level * 1.25);
+    switch (this.state.playerStats.weapon[0].name) {
+      case "Fists":
+        this.state.playerStats.weapon[0].dmg = 5 * (this.state.playerStats.level * 1.25);
+      break;
+      case "Katana":
+        this.state.playerStats.weapon[0].dmg = 10 * (this.state.playerStats.level * 1.25);
+      break;
+      case "Barbarian Sword":
+        this.state.playerStats.weapon[0].dmg = 20 * (this.state.playerStats.level * 1.25);
+      break;
+    }
     this.state.playerStats.exp[1] = 1000 * this.state.playerStats.level;
     this.setState({
       playerStats: this.state.playerStats,
     })
   },
+  weaponSpawn: function(x, y) {
+    for (var z = 0; z < this.state.board.length; z++) {
+      let objCheck = this.state.board[z];
+      if (x == objCheck.x && y == objCheck.y) {
+        if (this.state.board[z].display == "enemy") {
+          this.state.totalEnemies -= 1;
+        }
+        this.state.board[z] = {"x": x, "y": y, "display": "weapon", "health": false, "name": false, "dmg": false,}
+
+        this.setState({board: this.state.board, totalEnemies: this.state.totalEnemies})
+
+        return;
+      }
+    }
+  },
+  startWeaponSpawn: function() {
+    let runArray = [[25,25], [275, 25], [275, 275], [25, 275], [150, 150]]
+    for (var b = 0; b < runArray.length; b++) {
+      this.weaponSpawn(runArray[b][0],runArray[b][1])
+      }
+  },
+  startClearWeaponSpawn: function() {
+    let runArray = [[25,25], [275, 25], [275, 275], [25, 275], [150, 150]]
+    for (var b = 0; b < runArray.length; b++) {
+      this.clearWeaponSpawn(runArray[b][0],runArray[b][1])
+    }
+  },
+  clearWeaponSpawn: function(x, y) {
+    for (var z = 0; z < this.state.board.length; z++) {
+      let objCheck = this.state.board[z];
+      if (x == objCheck.x && y == objCheck.y) {
+        this.state.board[z] = {"x": x, "y": y, "display": "open", "health": false, "name": false, "dmg": false,}
+
+        this.setState({board: this.state.board})
+
+        return;
+      }
+    }
+  },
   componentWillMount: function() {
     this.setPlayer();
-    this.bindKeys();
+    this.levelUp();
     this.layMapOut();
     this.returnPlayer(0,0);
+    this.bindKeys();
   },
   render: function() {
     return (
