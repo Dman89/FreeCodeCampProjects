@@ -442,7 +442,9 @@ var Application = React.createClass({
 
   },
   death: function() {
-    this.setState(starterState)
+    let newStateBe = starterState;
+    newStateBe.level = 1;
+    this.setState(newStateBe)
     this.layMapOut();
   },
   setPlayer: function () {
