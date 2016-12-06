@@ -24,4 +24,4 @@ def compute_backlink(name):
         print(datas, file=text_file)
     with open(str(name)+".json", "w") as text_file:
         print(datas, file=text_file)
-compute_backlink("www.hailejewelryandloans.com")
+# compute_backlink("www.hailejewelryandloans.com")

@@ -7,6 +7,7 @@ import re
 from back_link_data import back_link_data
 from compile_backlink import compile_backlink
 from compute_backlink import compute_backlink
+from check_data import check_data
 try:
     search_term = sys.argv[1]
 except IndexError:
@@ -26,7 +27,7 @@ def save(data, index):
             with open("tempSave"+str(index)+".txt", "w", encoding="UTF-8") as text_file:
                 print(data, file=text_file)
         except TypeError:
-            print("\n\n\n","Didnt Save index file", "\n\n\n\n")
+            print("\n\n\n","Didnt Save Indexed Filename", "\n\n\n\n")
     except UnicodeEncodeError:
         print("Encoding Issue\n Report to Developer")
 
@@ -67,4 +68,4 @@ if total_queries > 1:
 max_count = total_queries * 10
 compile_backlink(search_term, max_count)
 compute_backlink(search_term)
-check_data(max_count)
+check_data(search_term)

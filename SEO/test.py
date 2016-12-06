@@ -14,14 +14,14 @@ def open_file(num):
     DATA = open("tempSave"+str(index)+".txt", "r")
     data = DATA.read()
     DATA.close()
-    results = re.findall(r"\"link\"\:\s\"[a-zA-Z0-9\:\.\-\_\+\%\/\\]*\"", data)
+    results = re.findall(r"\"link\"\:\s\"[a-zA-Z0-9\:\.\-\_\+\%\/\\\?\=\&\)\(]*\"", data)
     count = 0
     for res in results:
         # Pulls out backlinks
         res = res.replace('link":', "")
         res = res.replace("\"", "")
         res = res.replace(" ", "")
-        real = re.findall(r"\w*\W{3}[a-zA-Z0-9\.]*", res)
+        real = re.findall(r"\w*\W{3}[a-zA-Z0-9\.\-]*", res)
         res = real[0].replace("http://", "")
         res = res.replace("https://", "")
         res = res.replace("www.", "")
@@ -29,7 +29,6 @@ def open_file(num):
         save_data.append(res)
         count += 1
     # Saves backlinks to file
-    print(len(save_data))
     with open("backLink.txt", "w") as text_file:
         print(save_data, file=text_file)
 
