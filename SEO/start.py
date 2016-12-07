@@ -8,6 +8,8 @@ from back_link_data import back_link_data
 from compile_backlink import compile_backlink
 from compute_backlink import compute_backlink
 from check_data import check_data
+from config import config
+GoldStar = config()
 try:
     search_term = sys.argv[1]
 except IndexError:
